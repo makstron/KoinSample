@@ -1,6 +1,8 @@
 package com.klim.koinsample
 
 import android.app.Application
+import android.content.Context
+import androidx.multidex.MultiDex
 import com.klim.koinsample.data.di.dataSourcesModule
 import com.klim.koinsample.data.di.dbModule
 import com.klim.koinsample.data.di.repositoriesModule
@@ -26,6 +28,11 @@ class App : Application() {
             // declare used modules
             modules(viewModelsModule + useCasesModule + repositoriesModule + dataSourcesModule + dbModule + retrofitModule)
         }
+    }
+
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(base)
+        MultiDex.install(this)
     }
 
 }

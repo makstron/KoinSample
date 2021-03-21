@@ -5,26 +5,45 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.klim.koinsample.R
+import com.klim.koinsample.databinding.FragmentHomeBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class HomeFragment : Fragment() {
 
-    val homeViewModel: HomeViewModel by viewModel()
+    lateinit var binding: FragmentHomeBinding
+    val viewModel: HomeViewModel by viewModel()
+
+    val adapter: PostAdapter = PostAdapter()
+    lateinit var layoutManager: LinearLayoutManager
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.fragment_home, container, false)
-        val textView: TextView = root.findViewById(R.id.text_home)
-        homeViewModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
+
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
+        layoutManager = LinearLayoutManager(context)
+
+        binding.rvPosts.adapter = adapter
+        binding.rvPosts.layoutManager = layoutManager
+
+        viewModel.posts.observe(viewLifecycleOwner, { list ->
+            adapter.data.clear()
+            adapter.data.addAll(list)
+            adapter.notifyDataSetChanged()
         })
-        return root
+
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.updatePosts()
     }
 }

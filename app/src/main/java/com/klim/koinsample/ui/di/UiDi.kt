@@ -13,7 +13,8 @@ val viewModelsModule = module {
     }
 
     viewModel {
-        HomeViewModel(get())
+        //android context will be get automatically (without provider)
+        HomeViewModel(get(), get())
     }
 
     viewModel {
